@@ -34,7 +34,7 @@ public class XrayRenderer {
         Matrix4f posMat  = poseStack.last().pose();
         Matrix3f normMat = poseStack.last().normal();
 
-        RenderSystem.setShader(GameRenderer::getLineProgram);
+        RenderSystem.setShader(() -> Minecraft.getInstance().gameRenderer.getLineProgram());
         RenderSystem.lineWidth(2.5f);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
