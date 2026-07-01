@@ -1,0 +1,57 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+version = '1.0.0'
+group = 'com.seedxray'
+base { archivesName = 'seed-xray' }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: 'official', version: '1.20.4'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                seed_xray { source sourceSets.main }
+            }
+        }
+    }
+}
+
+repositories {}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.4-49.2.0'
+}
+
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [mod_version: '1.0.0', minecraft_version: '1.20.4', forge_version: '49.2.0']
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml']) {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+jar {
+    manifest {
+        attributes([
+            'Specification-Title'     : 'seed_xray',
+            'Specification-Vendor'    : 'seedxray',
+            'Specification-Version'   : '1',
+            'Implementation-Title'    : project.name,
+            'Implementation-Version'  : project.jar.archiveVersion,
+            'Implementation-Vendor'   : 'seedxray',
+            'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
