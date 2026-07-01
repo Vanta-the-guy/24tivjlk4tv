@@ -1,0 +1,43 @@
+name: Build Seed X-Ray Mod
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'microsoft'
+
+      - name: Set up Gradle 8.6
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.6'
+
+      - name: Cache Forge/Minecraft downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: forge-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: forge-
+
+      - name: Build mod JAR
+        run: gradle build --no-daemon --stacktrace
+        timeout-minutes: 25
+
+      - name: Upload compiled JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: seed-xray-mod
+          path: build/libs/seed-xray-*.jar
+          if-no-files-found: error
